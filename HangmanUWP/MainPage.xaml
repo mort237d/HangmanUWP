@@ -8,7 +8,20 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <StackPanel x:Name="mainStackPanel">
+        <StackPanel Orientation="Horizontal" >
+            <StackPanel x:Name="pTBStackPanel" Orientation="Horizontal">
+                <TextBox Height="20" Width="20" TextAlignment="Center"></TextBox>
+                <TextBox Height="20" Width="20" TextAlignment="Center"></TextBox>
+                <TextBox Height="20" Width="20" TextAlignment="Center"></TextBox>
+                <TextBox Height="20" Width="20" TextAlignment="Center"></TextBox>
+                <TextBox Height="20" Width="20" TextAlignment="Center"></TextBox>
+            </StackPanel>
+            <Image Source="Assets/Hangman.png"></Image>
+        </StackPanel>
+        <StackPanel x:Name="btnStackPanel" Orientation="Horizontal">
 
-    </Grid>
+        </StackPanel>
+    </StackPanel>
+    
 </Page>
