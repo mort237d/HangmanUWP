@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.ServiceModel.Channels;
+using System.Linq;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -10,17 +11,27 @@ namespace HangmanUWP
 {
     public sealed partial class MainPage : Page
     {
-        private string selectedWord = "ABC";
+        private int lifes = 5;
+        private string selectedWord = "Morten";
+        private char[] charArray;
 
         public MainPage()
         {
             this.InitializeComponent();
+
+            charArray = new char[selectedWord.Length];
+
             for (int i = 0; i < selectedWord.Length; i++)
+            {
+                charArray[i] = ' ';
+            }
+
+            foreach (var character in charArray)
             {
                 TextBlock textBlock = new TextBlock();
                 textBlock.Height = 30;
                 textBlock.Width = 30;
-                textBlock.Text = selectedWord[i].ToString();
+                textBlock.Text = character.ToString();
                 textBlock.TextAlignment = TextAlignment.Center;
                 pTBStackPanel.Children.Add(textBlock);
             }
@@ -48,10 +59,40 @@ namespace HangmanUWP
                 if (selectedWord.ToLower().Contains(btn.Content.ToString()))
                 {
                     Debug.WriteLine("Char is in the word");
+                    for (int i = 0; i < selectedWord.Length; i++)
+                    {
+                        if (selectedWord[i].ToString().ToLower() == btn.Content.ToString())
+                        {
+                            Debug.WriteLine(btn.Content + " is in index: " + i);
+                            charArray[i] = Convert.ToChar(btn.Content.ToString().ToLower());
+                        }
+                    }
+                    pTBStackPanel.Children.Clear();
+
+                    foreach (var character in charArray)
+                    {
+                        TextBlock textBlock = new TextBlock();
+                        textBlock.Height = 30;
+                        textBlock.Width = 30;
+                        textBlock.Text = character.ToString();
+                        textBlock.TextAlignment = TextAlignment.Center;
+                        pTBStackPanel.Children.Add(textBlock);
+                    }
+
+                    if (!charArray.Contains(' '))
+                    {
+                        Debug.WriteLine("WINNER");
+                    }
                 }
                 else
                 {
                     Debug.WriteLine("Char is NOT in the word");
+                    lifes--;
+                    Debug.WriteLine(lifes);
+                    if (lifes == 0)
+                    {
+                        Debug.WriteLine("GAME OVER!");
+                    }
                 }
                 btn.Background = new SolidColorBrush(Colors.Red);
             }
