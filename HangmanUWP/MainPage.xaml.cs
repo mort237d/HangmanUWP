@@ -2,25 +2,68 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace HangmanUWP
 {
     public sealed partial class MainPage : Page
     {
-        private int lifes = 5;
+        private int lifes;
         private string selectedWord;
-        string[] words = new string[] {"Morten", "Søren", "Sofie"};
+        string[] words = new string[] {"Morten", "David", "Sofie"};
         private string[] charArray;
+        private StackPanel pTBStackPanel;
 
         public MainPage()
         {
             this.InitializeComponent();
+
+            Setup();
+        }
+
+        private void Setup()
+        {
+            lifes = 5;
+
+            StackPanel topStackPanel = new StackPanel();
+            topStackPanel.Name = "topStackPanel";
+            topStackPanel.Orientation = Orientation.Horizontal;
+
+            pTBStackPanel = new StackPanel();
+            pTBStackPanel.Name = "pTBStackPanel";
+            pTBStackPanel.Orientation = Orientation.Horizontal;
+
+            Image img = new Image();
+            img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Hangman.png"));
+
+            topStackPanel.Children.Add(pTBStackPanel);
+            topStackPanel.Children.Add(img);
+
+            StackPanel bottomStackPanel = new StackPanel();
+            bottomStackPanel.Name = "bottomStackPanel";
+            bottomStackPanel.Orientation = Orientation.Vertical;
+            bottomStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+
+            StackPanel btnTopStackPanel = new StackPanel();
+            btnTopStackPanel.Name = "btnTopStackPanel";
+            btnTopStackPanel.Orientation = Orientation.Horizontal;
+
+            StackPanel btnBottomStackPanel = new StackPanel();
+            btnBottomStackPanel.Name = "btnBottomStackPanel";
+            btnBottomStackPanel.Orientation = Orientation.Horizontal;
+
+            bottomStackPanel.Children.Add(btnTopStackPanel);
+            bottomStackPanel.Children.Add(btnBottomStackPanel);
+
+            mainStackPanel.Children.Add(topStackPanel);
+            mainStackPanel.Children.Add(bottomStackPanel);
 
             //Selects a random word
             Random rnd = new Random();
@@ -30,7 +73,7 @@ namespace HangmanUWP
             charArray = new string[selectedWord.Length];
 
             //fills charArray with empty indexes and show them in textblocks
-            for (int i = 0; i < selectedWord.Length; i++) charArray[i] = " ";
+            for (int i = 0; i < selectedWord.Length; i++) charArray[i] = "_";
             foreach (var character in charArray)
             {
                 TextBlock textBlock = new TextBlock();
@@ -42,7 +85,11 @@ namespace HangmanUWP
                 pTBStackPanel.Children.Add(textBlock);
             }
 
-            List<char> ABC = new List<char>(){ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z', 'æ', 'ø', 'å' };
+            List<char> ABC = new List<char>()
+            {
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                'x', 'y', 'z', 'æ', 'ø', 'å'
+            };
             int count = 0;
             foreach (var character in ABC)
             {
@@ -91,9 +138,31 @@ namespace HangmanUWP
                         pTBStackPanel.Children.Add(textBlock);
                     }
 
-                    if (!charArray.Contains(" "))
+                    if (!charArray.Contains("_"))
                     {
                         Debug.WriteLine("WINNER");
+                        mainStackPanel.Children.Clear();
+
+                        TextBlock textBlock = new TextBlock();
+                        textBlock.Text = "WINNER!";
+                        textBlock.FontSize = 70;
+                        textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                        textBlock.VerticalAlignment = VerticalAlignment.Center;
+                        mainStackPanel.Children.Add(textBlock);
+
+                        Button playAgainButton = new Button();
+                        playAgainButton.Content = "Play Again";
+                        playAgainButton.HorizontalAlignment = HorizontalAlignment.Center;
+                        playAgainButton.VerticalAlignment = VerticalAlignment.Center;
+                        playAgainButton.Click += playAgain_Click;
+                        mainStackPanel.Children.Add(playAgainButton);
+
+                        Button exitButton = new Button();
+                        exitButton.Content = "Exit";
+                        exitButton.HorizontalAlignment = HorizontalAlignment.Center;
+                        exitButton.VerticalAlignment = VerticalAlignment.Center;
+                        exitButton.Click += exit_Click;
+                        mainStackPanel.Children.Add(exitButton);
                     }
                 }
                 else
@@ -104,10 +173,50 @@ namespace HangmanUWP
                     if (lifes == 0)
                     {
                         Debug.WriteLine("GAME OVER!");
+                        mainStackPanel.Children.Clear();
+
+                        TextBlock textBlock = new TextBlock();
+                        textBlock.Text = "GAME OVER!";
+                        textBlock.FontSize = 70;
+                        textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+                        textBlock.VerticalAlignment = VerticalAlignment.Center;
+                        mainStackPanel.Children.Add(textBlock);
+
+                        TextBlock textBlock2 = new TextBlock();
+                        textBlock2.Text = "The word was: " + selectedWord;
+                        textBlock2.FontSize = 70;
+                        textBlock2.HorizontalAlignment = HorizontalAlignment.Center;
+                        textBlock2.VerticalAlignment = VerticalAlignment.Center;
+                        mainStackPanel.Children.Add(textBlock2);
+
+                        Button playAgainButton = new Button();
+                        playAgainButton.Content = "Play Again";
+                        playAgainButton.HorizontalAlignment = HorizontalAlignment.Center;
+                        playAgainButton.VerticalAlignment = VerticalAlignment.Center;
+                        playAgainButton.Click += playAgain_Click;
+                        mainStackPanel.Children.Add(playAgainButton);
+
+                        Button exitButton = new Button();
+                        exitButton.Content = "Exit";
+                        exitButton.HorizontalAlignment = HorizontalAlignment.Center;
+                        exitButton.VerticalAlignment = VerticalAlignment.Center;
+                        exitButton.Click += exit_Click;
+                        mainStackPanel.Children.Add(exitButton);
                     }
                 }
                 btn.Background = new SolidColorBrush(Colors.Red);
             }
+        }
+
+        private void playAgain_Click(object sender, RoutedEventArgs e)
+        {
+            mainStackPanel.Children.Clear();
+            Setup();
+        }
+
+        private void exit_Click(object sender, RoutedEventArgs e)
+        {
+            CoreApplication.Exit();
         }
     }
 }

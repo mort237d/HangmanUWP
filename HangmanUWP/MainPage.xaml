@@ -9,16 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <StackPanel x:Name="mainStackPanel">
-        <StackPanel Orientation="Horizontal" >
-            <StackPanel x:Name="pTBStackPanel" Orientation="Horizontal">
-                
-            </StackPanel>
-            <Image Source="Assets/Hangman.png" HorizontalAlignment="Right"></Image>
-        </StackPanel>
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <StackPanel x:Name="btnTopStackPanel" Orientation="Horizontal"></StackPanel>
-            <StackPanel x:Name="btnBottomStackPanel" Orientation="Horizontal"></StackPanel>
-        </StackPanel>
+        
     </StackPanel>
     
 </Page>
