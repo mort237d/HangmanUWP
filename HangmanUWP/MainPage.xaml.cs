@@ -150,6 +150,13 @@ namespace HangmanUWP
                         textBlock.VerticalAlignment = VerticalAlignment.Center;
                         mainStackPanel.Children.Add(textBlock);
 
+                        TextBlock textBlock2 = new TextBlock();
+                        textBlock2.Text = "The word was: " + selectedWord;
+                        textBlock2.FontSize = 70;
+                        textBlock2.HorizontalAlignment = HorizontalAlignment.Center;
+                        textBlock2.VerticalAlignment = VerticalAlignment.Center;
+                        mainStackPanel.Children.Add(textBlock2);
+
                         Button playAgainButton = new Button();
                         playAgainButton.Content = "Play Again";
                         playAgainButton.HorizontalAlignment = HorizontalAlignment.Center;
@@ -164,6 +171,7 @@ namespace HangmanUWP
                         exitButton.Click += exit_Click;
                         mainStackPanel.Children.Add(exitButton);
                     }
+                    btn.Background = new SolidColorBrush(Colors.GreenYellow);
                 }
                 else
                 {
@@ -203,8 +211,8 @@ namespace HangmanUWP
                         exitButton.Click += exit_Click;
                         mainStackPanel.Children.Add(exitButton);
                     }
+                    btn.Background = new SolidColorBrush(Colors.Red);
                 }
-                btn.Background = new SolidColorBrush(Colors.Red);
             }
         }
 
