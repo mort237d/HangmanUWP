@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace HangmanUWP
@@ -12,38 +14,47 @@ namespace HangmanUWP
     public sealed partial class MainPage : Page
     {
         private int lifes = 5;
-        private string selectedWord = "Morten";
-        private char[] charArray;
+        private string selectedWord;
+        string[] words = new string[] {"Morten", "Søren", "Sofie"};
+        private string[] charArray;
 
         public MainPage()
         {
             this.InitializeComponent();
 
-            charArray = new char[selectedWord.Length];
+            //Selects a random word
+            Random rnd = new Random();
+            selectedWord = words[rnd.Next(0, words.Length)];
 
-            for (int i = 0; i < selectedWord.Length; i++)
-            {
-                charArray[i] = ' ';
-            }
+            //Makes char array in length of selected word
+            charArray = new string[selectedWord.Length];
 
+            //fills charArray with empty indexes and show them in textblocks
+            for (int i = 0; i < selectedWord.Length; i++) charArray[i] = " ";
             foreach (var character in charArray)
             {
                 TextBlock textBlock = new TextBlock();
                 textBlock.Height = 30;
                 textBlock.Width = 30;
                 textBlock.Text = character.ToString();
+                textBlock.TextDecorations = TextDecorations.Underline;
                 textBlock.TextAlignment = TextAlignment.Center;
                 pTBStackPanel.Children.Add(textBlock);
             }
 
             List<char> ABC = new List<char>(){ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z', 'æ', 'ø', 'å' };
+            int count = 0;
             foreach (var character in ABC)
             {
                 Button ABCbtn = new Button();
                 ABCbtn.Content = character.ToString();
                 ABCbtn.Width = 40;
                 ABCbtn.Click += new RoutedEventHandler(OnABCbtnClick);
-                btnStackPanel.Children.Add(ABCbtn);
+
+                if (count < 14) btnTopStackPanel.Children.Add(ABCbtn);
+                else btnBottomStackPanel.Children.Add(ABCbtn);
+
+                count++;
             }
         }
 
@@ -64,7 +75,7 @@ namespace HangmanUWP
                         if (selectedWord[i].ToString().ToLower() == btn.Content.ToString())
                         {
                             Debug.WriteLine(btn.Content + " is in index: " + i);
-                            charArray[i] = Convert.ToChar(btn.Content.ToString().ToLower());
+                            charArray[i] = btn.Content.ToString().ToLower();
                         }
                     }
                     pTBStackPanel.Children.Clear();
@@ -74,12 +85,13 @@ namespace HangmanUWP
                         TextBlock textBlock = new TextBlock();
                         textBlock.Height = 30;
                         textBlock.Width = 30;
-                        textBlock.Text = character.ToString();
+                        textBlock.Text = character;
+                        textBlock.TextDecorations = TextDecorations.Underline;
                         textBlock.TextAlignment = TextAlignment.Center;
                         pTBStackPanel.Children.Add(textBlock);
                     }
 
-                    if (!charArray.Contains(' '))
+                    if (!charArray.Contains(" "))
                     {
                         Debug.WriteLine("WINNER");
                     }

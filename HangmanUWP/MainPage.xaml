@@ -13,10 +13,11 @@
             <StackPanel x:Name="pTBStackPanel" Orientation="Horizontal">
                 
             </StackPanel>
-            <Image Source="Assets/Hangman.png"></Image>
+            <Image Source="Assets/Hangman.png" HorizontalAlignment="Right"></Image>
         </StackPanel>
-        <StackPanel x:Name="btnStackPanel" Orientation="Horizontal">
-
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+            <StackPanel x:Name="btnTopStackPanel" Orientation="Horizontal"></StackPanel>
+            <StackPanel x:Name="btnBottomStackPanel" Orientation="Horizontal"></StackPanel>
         </StackPanel>
     </StackPanel>
     
