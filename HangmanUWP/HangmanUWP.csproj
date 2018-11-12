@@ -107,7 +107,13 @@
     <None Include="HangmanUWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Hangman.png" />
+    <Content Include="Assets\Galge1.png" />
+    <Content Include="Assets\Galge2.png" />
+    <Content Include="Assets\Galge3.png" />
+    <Content Include="Assets\Galge4.png" />
+    <Content Include="Assets\Galge5.png" />
+    <Content Include="Assets\Galge6.png" />
+    <Content Include="Assets\Galge7.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

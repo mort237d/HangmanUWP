@@ -19,7 +19,8 @@ namespace HangmanUWP
         private string selectedWord;
         string[] words = new string[] {"Morten", "David", "Sofie"};
         private string[] charArray;
-        private StackPanel pTBStackPanel;
+        private StackPanel pTBStackPanel, topStackPanel;
+        private Image img;
 
         public MainPage()
         {
@@ -30,18 +31,19 @@ namespace HangmanUWP
 
         private void Setup()
         {
-            lifes = 5;
+            lifes = 6;
 
-            StackPanel topStackPanel = new StackPanel();
+            topStackPanel = new StackPanel();
             topStackPanel.Name = "topStackPanel";
             topStackPanel.Orientation = Orientation.Horizontal;
+            topStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
 
             pTBStackPanel = new StackPanel();
             pTBStackPanel.Name = "pTBStackPanel";
             pTBStackPanel.Orientation = Orientation.Horizontal;
 
-            Image img = new Image();
-            img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Hangman.png"));
+            img = new Image();
+            img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge1.png"));
 
             topStackPanel.Children.Add(pTBStackPanel);
             topStackPanel.Children.Add(img);
@@ -54,6 +56,7 @@ namespace HangmanUWP
             StackPanel btnTopStackPanel = new StackPanel();
             btnTopStackPanel.Name = "btnTopStackPanel";
             btnTopStackPanel.Orientation = Orientation.Horizontal;
+            btnTopStackPanel.Margin = new Thickness(0,50,0,0);
 
             StackPanel btnBottomStackPanel = new StackPanel();
             btnBottomStackPanel.Name = "btnBottomStackPanel";
@@ -94,7 +97,7 @@ namespace HangmanUWP
             foreach (var character in ABC)
             {
                 Button ABCbtn = new Button();
-                ABCbtn.Content = character.ToString();
+                ABCbtn.Content = character.ToString().ToUpper();
                 ABCbtn.Width = 40;
                 ABCbtn.Click += new RoutedEventHandler(OnABCbtnClick);
 
@@ -108,21 +111,21 @@ namespace HangmanUWP
         void OnABCbtnClick(object sender, RoutedEventArgs e)
         {
             Button btn = sender as Button;
-            if ((btn.Background as SolidColorBrush).Color == Windows.UI.Colors.Red)
+            if ((btn.Background as SolidColorBrush).Color == Windows.UI.Colors.Red || (btn.Background as SolidColorBrush).Color == Windows.UI.Colors.GreenYellow)
             {
                 Debug.WriteLine("Char already used");
             }
             else
             {
-                if (selectedWord.ToLower().Contains(btn.Content.ToString()))
+                if (selectedWord.ToUpper().Contains(btn.Content.ToString()))
                 {
                     Debug.WriteLine("Char is in the word");
                     for (int i = 0; i < selectedWord.Length; i++)
                     {
-                        if (selectedWord[i].ToString().ToLower() == btn.Content.ToString())
+                        if (selectedWord[i].ToString().ToUpper() == btn.Content.ToString())
                         {
                             Debug.WriteLine(btn.Content + " is in index: " + i);
-                            charArray[i] = btn.Content.ToString().ToLower();
+                            charArray[i] = btn.Content.ToString().ToUpper();
                         }
                     }
                     pTBStackPanel.Children.Clear();
@@ -178,7 +181,12 @@ namespace HangmanUWP
                     Debug.WriteLine("Char is NOT in the word");
                     lifes--;
                     Debug.WriteLine(lifes);
-                    if (lifes == 0)
+                    if (lifes == 5)img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge2.png"));
+                    else if (lifes == 4) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge3.png"));
+                    else if (lifes == 3) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge4.png"));
+                    else if (lifes == 2) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge5.png"));
+                    else if (lifes == 1) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge6.png"));
+                    else if (lifes == 0)
                     {
                         Debug.WriteLine("GAME OVER!");
                         mainStackPanel.Children.Clear();
@@ -196,6 +204,10 @@ namespace HangmanUWP
                         textBlock2.HorizontalAlignment = HorizontalAlignment.Center;
                         textBlock2.VerticalAlignment = VerticalAlignment.Center;
                         mainStackPanel.Children.Add(textBlock2);
+
+                        Image img = new Image();
+                        img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge7.png"));
+                        mainStackPanel.Children.Add(img);
 
                         Button playAgainButton = new Button();
                         playAgainButton.Content = "Play Again";
