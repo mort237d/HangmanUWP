@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Windows.ApplicationModel.Core;
+using Windows.System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,23 +18,45 @@ namespace HangmanUWP
     public sealed partial class MainPage : Page
     {
         private int lifes;
-        private string selectedWord;
+        private string selectedWord = "hejsameddejsa";
         string[] words = new string[] {"Morten", "David", "Sofie"};
-        private string[] charArray;
+        private string[] stringArray;
         private StackPanel pTBStackPanel, topStackPanel;
         private Image img;
+        private TextBox newWordTextBox;
+        private List<char> ABC = new List<char>() { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z', 'æ', 'ø', 'å' };
 
         public MainPage()
         {
             this.InitializeComponent();
 
             Setup();
+
+            
         }
 
         private void Setup()
         {
             lifes = 6;
+            
+            //Selects a random word
+            if (selectedWord == "hejsameddejsa")
+            {
+                Random rnd = new Random();
+                selectedWord = words[rnd.Next(0, words.Length)];
+            }
 
+            //Makes char array in length of selected word
+            stringArray = new string[selectedWord.Length];
+
+            //fills stringArray with empty indexes and show them in textblocks
+            for (int i = 0; i < selectedWord.Length; i++) stringArray[i] = "_";
+
+            GUISetup();
+        }
+
+        private void GUISetup()
+        {
             topStackPanel = new StackPanel();
             topStackPanel.Name = "topStackPanel";
             topStackPanel.Orientation = Orientation.Horizontal;
@@ -56,7 +80,7 @@ namespace HangmanUWP
             StackPanel btnTopStackPanel = new StackPanel();
             btnTopStackPanel.Name = "btnTopStackPanel";
             btnTopStackPanel.Orientation = Orientation.Horizontal;
-            btnTopStackPanel.Margin = new Thickness(0,50,0,0);
+            btnTopStackPanel.Margin = new Thickness(0, 50, 0, 0);
 
             StackPanel btnBottomStackPanel = new StackPanel();
             btnBottomStackPanel.Name = "btnBottomStackPanel";
@@ -65,34 +89,23 @@ namespace HangmanUWP
             bottomStackPanel.Children.Add(btnTopStackPanel);
             bottomStackPanel.Children.Add(btnBottomStackPanel);
 
+            newWordTextBox = new TextBox();
+
+            Button newWordbtn = new Button();
+            newWordbtn.Content = "Add new word";
+            newWordbtn.Click += AddWord_Click;
+
+            StackPanel lastStackPanel = new StackPanel();
+            lastStackPanel.Name = "btnBottomStackPanel";
+            lastStackPanel.Orientation = Orientation.Horizontal;
+
+            lastStackPanel.Children.Add(newWordTextBox);
+            lastStackPanel.Children.Add(newWordbtn);
+
             mainStackPanel.Children.Add(topStackPanel);
             mainStackPanel.Children.Add(bottomStackPanel);
+            mainStackPanel.Children.Add(lastStackPanel);
 
-            //Selects a random word
-            Random rnd = new Random();
-            selectedWord = words[rnd.Next(0, words.Length)];
-
-            //Makes char array in length of selected word
-            charArray = new string[selectedWord.Length];
-
-            //fills charArray with empty indexes and show them in textblocks
-            for (int i = 0; i < selectedWord.Length; i++) charArray[i] = "_";
-            foreach (var character in charArray)
-            {
-                TextBlock textBlock = new TextBlock();
-                textBlock.Height = 30;
-                textBlock.Width = 30;
-                textBlock.Text = character.ToString();
-                textBlock.TextDecorations = TextDecorations.Underline;
-                textBlock.TextAlignment = TextAlignment.Center;
-                pTBStackPanel.Children.Add(textBlock);
-            }
-
-            List<char> ABC = new List<char>()
-            {
-                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-                'x', 'y', 'z', 'æ', 'ø', 'å'
-            };
             int count = 0;
             foreach (var character in ABC)
             {
@@ -106,9 +119,20 @@ namespace HangmanUWP
 
                 count++;
             }
+
+            foreach (var character in stringArray)
+            {
+                TextBlock textBlock = new TextBlock();
+                textBlock.Height = 30;
+                textBlock.Width = 30;
+                textBlock.Text = character;
+                textBlock.TextDecorations = TextDecorations.Underline;
+                textBlock.TextAlignment = TextAlignment.Center;
+                pTBStackPanel.Children.Add(textBlock);
+            }
         }
 
-        void OnABCbtnClick(object sender, RoutedEventArgs e)
+        public void OnABCbtnClick(object sender, RoutedEventArgs e)
         {
             Button btn = sender as Button;
             if ((btn.Background as SolidColorBrush).Color == Windows.UI.Colors.Red || (btn.Background as SolidColorBrush).Color == Windows.UI.Colors.GreenYellow)
@@ -125,12 +149,12 @@ namespace HangmanUWP
                         if (selectedWord[i].ToString().ToUpper() == btn.Content.ToString())
                         {
                             Debug.WriteLine(btn.Content + " is in index: " + i);
-                            charArray[i] = btn.Content.ToString().ToUpper();
+                            stringArray[i] = btn.Content.ToString().ToUpper();
                         }
                     }
                     pTBStackPanel.Children.Clear();
 
-                    foreach (var character in charArray)
+                    foreach (var character in stringArray)
                     {
                         TextBlock textBlock = new TextBlock();
                         textBlock.Height = 30;
@@ -141,7 +165,7 @@ namespace HangmanUWP
                         pTBStackPanel.Children.Add(textBlock);
                     }
 
-                    if (!charArray.Contains("_"))
+                    if (!stringArray.Contains("_"))
                     {
                         Debug.WriteLine("WINNER");
                         mainStackPanel.Children.Clear();
@@ -181,7 +205,7 @@ namespace HangmanUWP
                     Debug.WriteLine("Char is NOT in the word");
                     lifes--;
                     Debug.WriteLine(lifes);
-                    if (lifes == 5)img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge2.png"));
+                    if (lifes == 5) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge2.png"));
                     else if (lifes == 4) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge3.png"));
                     else if (lifes == 3) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge4.png"));
                     else if (lifes == 2) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge5.png"));
@@ -197,7 +221,7 @@ namespace HangmanUWP
                         textBlock.HorizontalAlignment = HorizontalAlignment.Center;
                         textBlock.VerticalAlignment = VerticalAlignment.Center;
                         mainStackPanel.Children.Add(textBlock);
-
+                        
                         TextBlock textBlock2 = new TextBlock();
                         textBlock2.Text = "The word was: " + selectedWord;
                         textBlock2.FontSize = 70;
@@ -205,8 +229,10 @@ namespace HangmanUWP
                         textBlock2.VerticalAlignment = VerticalAlignment.Center;
                         mainStackPanel.Children.Add(textBlock2);
 
-                        Image img = new Image();
+                        img = new Image();
                         img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge7.png"));
+                        img.Height = 300;
+                        img.Width = 300;
                         mainStackPanel.Children.Add(img);
 
                         Button playAgainButton = new Button();
@@ -231,12 +257,20 @@ namespace HangmanUWP
         private void playAgain_Click(object sender, RoutedEventArgs e)
         {
             mainStackPanel.Children.Clear();
+            selectedWord = "hejsameddejsa";
             Setup();
         }
 
         private void exit_Click(object sender, RoutedEventArgs e)
         {
             CoreApplication.Exit();
+        }
+
+        private void AddWord_Click(object sender, RoutedEventArgs e)
+        {
+            mainStackPanel.Children.Clear();
+            selectedWord = newWordTextBox.Text;
+            Setup();
         }
     }
 }
