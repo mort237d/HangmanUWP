@@ -19,11 +19,11 @@ namespace HangmanUWP
     {
         private int lifes;
         private string selectedWord = "hejsameddejsa";
-        string[] words = new string[] {"Morten", "David", "Sofie"};
+        string[] words = new string[] {"Bil", "Cykel", "Marmelade", "Syltetøj", "Kaffe", "Brød", "Medister", "Akvarie", "Spade", "Jord", "Moderjord" };
         private string[] stringArray;
         private StackPanel pTBStackPanel, topStackPanel;
         private Image img;
-        private TextBox newWordTextBox;
+        private TextBox newWordTextBox, playAgainNewWordTextBox;
         private List<char> ABC = new List<char>() { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z', 'æ', 'ø', 'å' };
 
         public MainPage()
@@ -31,8 +31,6 @@ namespace HangmanUWP
             this.InitializeComponent();
 
             Setup();
-
-            
         }
 
         private void Setup()
@@ -61,6 +59,7 @@ namespace HangmanUWP
             topStackPanel.Name = "topStackPanel";
             topStackPanel.Orientation = Orientation.Horizontal;
             topStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            topStackPanel.Margin = new Thickness(0, 50, 0, 0);
 
             pTBStackPanel = new StackPanel();
             pTBStackPanel.Name = "pTBStackPanel";
@@ -92,12 +91,14 @@ namespace HangmanUWP
             newWordTextBox = new TextBox();
 
             Button newWordbtn = new Button();
-            newWordbtn.Content = "Add new word";
+            newWordbtn.Content = "Nyt spil med indtastede ord";
             newWordbtn.Click += AddWord_Click;
 
             StackPanel lastStackPanel = new StackPanel();
             lastStackPanel.Name = "btnBottomStackPanel";
             lastStackPanel.Orientation = Orientation.Horizontal;
+            lastStackPanel.Margin = new Thickness(0, 50, 0, 0);
+            lastStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
 
             lastStackPanel.Children.Add(newWordTextBox);
             lastStackPanel.Children.Add(newWordbtn);
@@ -137,18 +138,15 @@ namespace HangmanUWP
             Button btn = sender as Button;
             if ((btn.Background as SolidColorBrush).Color == Windows.UI.Colors.Red || (btn.Background as SolidColorBrush).Color == Windows.UI.Colors.GreenYellow)
             {
-                Debug.WriteLine("Char already used");
             }
             else
             {
                 if (selectedWord.ToUpper().Contains(btn.Content.ToString()))
                 {
-                    Debug.WriteLine("Char is in the word");
                     for (int i = 0; i < selectedWord.Length; i++)
                     {
                         if (selectedWord[i].ToString().ToUpper() == btn.Content.ToString())
                         {
-                            Debug.WriteLine(btn.Content + " is in index: " + i);
                             stringArray[i] = btn.Content.ToString().ToUpper();
                         }
                     }
@@ -167,34 +165,53 @@ namespace HangmanUWP
 
                     if (!stringArray.Contains("_"))
                     {
-                        Debug.WriteLine("WINNER");
                         mainStackPanel.Children.Clear();
 
-                        TextBlock textBlock = new TextBlock();
-                        textBlock.Text = "WINNER!";
-                        textBlock.FontSize = 70;
-                        textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                        textBlock.VerticalAlignment = VerticalAlignment.Center;
+                        TextBlock textBlock = new TextBlock
+                        {
+                            Text = "WINNER!",
+                            FontSize = 70,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center
+                        };
                         mainStackPanel.Children.Add(textBlock);
 
-                        TextBlock textBlock2 = new TextBlock();
-                        textBlock2.Text = "The word was: " + selectedWord;
-                        textBlock2.FontSize = 70;
-                        textBlock2.HorizontalAlignment = HorizontalAlignment.Center;
-                        textBlock2.VerticalAlignment = VerticalAlignment.Center;
+                        TextBlock textBlock2 = new TextBlock
+                        {
+                            Text = "The word was: " + selectedWord,
+                            FontSize = 70,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center
+                        };
                         mainStackPanel.Children.Add(textBlock2);
 
-                        Button playAgainButton = new Button();
-                        playAgainButton.Content = "Play Again";
-                        playAgainButton.HorizontalAlignment = HorizontalAlignment.Center;
-                        playAgainButton.VerticalAlignment = VerticalAlignment.Center;
+                        playAgainNewWordTextBox = new TextBox
+                        {
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            Width = 100
+                        };
+                        mainStackPanel.Children.Add(playAgainNewWordTextBox);
+
+                        Button playAgainButton = new Button
+                        {
+                            Content = "Play Again",
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            Margin = new Thickness(0, 20, 0, 0),
+                            Width = 100
+                        };
                         playAgainButton.Click += playAgain_Click;
                         mainStackPanel.Children.Add(playAgainButton);
 
-                        Button exitButton = new Button();
-                        exitButton.Content = "Exit";
-                        exitButton.HorizontalAlignment = HorizontalAlignment.Center;
-                        exitButton.VerticalAlignment = VerticalAlignment.Center;
+                        Button exitButton = new Button
+                        {
+                            Content = "Exit",
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            Margin = new Thickness(0, 20, 0, 0),
+                            Width = 100
+                        };
                         exitButton.Click += exit_Click;
                         mainStackPanel.Children.Add(exitButton);
                     }
@@ -202,52 +219,86 @@ namespace HangmanUWP
                 }
                 else
                 {
-                    Debug.WriteLine("Char is NOT in the word");
                     lifes--;
-                    Debug.WriteLine(lifes);
-                    if (lifes == 5) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge2.png"));
-                    else if (lifes == 4) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge3.png"));
-                    else if (lifes == 3) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge4.png"));
-                    else if (lifes == 2) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge5.png"));
-                    else if (lifes == 1) img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge6.png"));
-                    else if (lifes == 0)
+                    switch (lifes)
                     {
-                        Debug.WriteLine("GAME OVER!");
-                        mainStackPanel.Children.Clear();
+                        case 5:
+                            img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge2.png"));
+                            break;
+                        case 4:
+                            img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge3.png"));
+                            break;
+                        case 3:
+                            img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge4.png"));
+                            break;
+                        case 2:
+                            img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge5.png"));
+                            break;
+                        case 1:
+                            img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge6.png"));
+                            break;
+                        case 0:
+                        {
+                            mainStackPanel.Children.Clear();
 
-                        TextBlock textBlock = new TextBlock();
-                        textBlock.Text = "GAME OVER!";
-                        textBlock.FontSize = 70;
-                        textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                        textBlock.VerticalAlignment = VerticalAlignment.Center;
-                        mainStackPanel.Children.Add(textBlock);
-                        
-                        TextBlock textBlock2 = new TextBlock();
-                        textBlock2.Text = "The word was: " + selectedWord;
-                        textBlock2.FontSize = 70;
-                        textBlock2.HorizontalAlignment = HorizontalAlignment.Center;
-                        textBlock2.VerticalAlignment = VerticalAlignment.Center;
-                        mainStackPanel.Children.Add(textBlock2);
+                            TextBlock textBlock = new TextBlock
+                            {
+                                Text = "GAME OVER!",
+                                FontSize = 70,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center
+                            };
+                            mainStackPanel.Children.Add(textBlock);
 
-                        img = new Image();
-                        img.Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge7.png"));
-                        img.Height = 300;
-                        img.Width = 300;
-                        mainStackPanel.Children.Add(img);
+                            TextBlock textBlock2 = new TextBlock
+                            {
+                                Text = "The word was: " + selectedWord,
+                                FontSize = 70,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center
+                            };
+                            mainStackPanel.Children.Add(textBlock2);
 
-                        Button playAgainButton = new Button();
-                        playAgainButton.Content = "Play Again";
-                        playAgainButton.HorizontalAlignment = HorizontalAlignment.Center;
-                        playAgainButton.VerticalAlignment = VerticalAlignment.Center;
-                        playAgainButton.Click += playAgain_Click;
-                        mainStackPanel.Children.Add(playAgainButton);
+                            img = new Image
+                            {
+                                Source = new BitmapImage(new Uri(base.BaseUri, "/Assets/Galge7.png")),
+                                Height = 300,
+                                Width = 300
+                            };
+                            mainStackPanel.Children.Add(img);
 
-                        Button exitButton = new Button();
-                        exitButton.Content = "Exit";
-                        exitButton.HorizontalAlignment = HorizontalAlignment.Center;
-                        exitButton.VerticalAlignment = VerticalAlignment.Center;
-                        exitButton.Click += exit_Click;
-                        mainStackPanel.Children.Add(exitButton);
+                            playAgainNewWordTextBox = new TextBox
+                            {
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Margin = new Thickness(0, 20, 0, 0),
+                                Width = 100
+                            };
+                            mainStackPanel.Children.Add(playAgainNewWordTextBox);
+
+                                Button playAgainButton = new Button
+                            {
+                                Content = "Play Again",
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Margin = new Thickness(0, 20, 0, 0),
+                                Width = 100
+                                };
+                            playAgainButton.Click += playAgain_Click;
+                            mainStackPanel.Children.Add(playAgainButton);
+
+                            Button exitButton = new Button
+                            {
+                                Content = "Exit",
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Margin = new Thickness(0, 20, 0, 0),
+                                Width = 100
+                            };
+                            exitButton.Click += exit_Click;
+                            mainStackPanel.Children.Add(exitButton);
+                            break;
+                        }
                     }
                     btn.Background = new SolidColorBrush(Colors.Red);
                 }
@@ -257,7 +308,8 @@ namespace HangmanUWP
         private void playAgain_Click(object sender, RoutedEventArgs e)
         {
             mainStackPanel.Children.Clear();
-            selectedWord = "hejsameddejsa";
+            if (playAgainNewWordTextBox.Text.Length != 0) selectedWord = playAgainNewWordTextBox.Text;
+            else selectedWord = "hejsameddejsa";
             Setup();
         }
 
